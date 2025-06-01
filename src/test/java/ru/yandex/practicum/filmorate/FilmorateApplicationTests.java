@@ -50,7 +50,4 @@ class FilmorateApplicationTests {
 
 		assertTrue(user.getBirthday().isAfter(LocalDate.now()), "Дата рождения не может быть в будущем");
 	}
-
-
-
 }
