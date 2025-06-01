@@ -17,7 +17,7 @@ import java.util.Map;
 public class FilmController {
 
     private Map<Long, Film> films = new HashMap<>();
-    private final static Logger log = LoggerFactory.getLogger(FilmController.class);
+    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private static final LocalDate EARLIEST_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
 
