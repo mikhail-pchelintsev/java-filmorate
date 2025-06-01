@@ -59,13 +59,19 @@ public class UserController {
     @PutMapping
     public User update(@RequestBody User newUser) {
         log.info("Получен запрос на обновление пользователя: {}", newUser);
+
+        if (!users.containsKey(newUser.getId())) {
+            log.error("Пользователь с id {} не найден", newUser.getId());
+            throw new ValidationException("Пользователь с таким id не найден");
+        }
+
         if (newUser.getEmail() == null || !newUser.getEmail().contains("@")) {
             log.error("Email не может быть пустым и должен содержать '@'");
             throw new ValidationException("Email не может быть пустым и должен содержать '@'");
         }
 
         if (newUser.getLogin() == null || newUser.getLogin().isBlank() || newUser.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может быть пустым");
+            throw new ValidationException("Логин не может быть пустым и не должен содержать пробелы");
         }
 
         if (newUser.getBirthday() == null || newUser.getBirthday().isAfter(LocalDate.now())) {
@@ -73,7 +79,7 @@ public class UserController {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
 
-        if (newUser.getName() == null || newUser.getName().isBlank() || newUser.getLogin().contains(" ")) {
+        if (newUser.getName() == null || newUser.getName().isBlank()) {
             newUser.setName(newUser.getLogin());
         }
 
