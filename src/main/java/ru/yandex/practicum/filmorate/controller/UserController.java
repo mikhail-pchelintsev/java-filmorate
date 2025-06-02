@@ -24,7 +24,7 @@ public class UserController {
 
     @PostMapping
     public User createPost(@RequestBody User newUser) {
-        log.info("Получен запрос на создание пользователя: {}", newUser);
+        log.debug("Получен запрос на создание пользователя: {}", newUser);
         if (newUser.getEmail() == null || !newUser.getEmail().contains("@")) {
             log.error("Email не может быть пустым и должен содержать '@'");
             throw new ValidationException("Email не может быть пустым и должен содержать '@'");
@@ -45,7 +45,7 @@ public class UserController {
 
         newUser.setId(getNextId());
         users.put(newUser.getId(), newUser);
-        log.info("Пользователь успешно создан: {}", newUser);
+        log.debug("Пользователь успешно создан: {}", newUser);
         return newUser;
     }
 
@@ -58,7 +58,7 @@ public class UserController {
 
     @PutMapping
     public User update(@RequestBody User newUser) {
-        log.info("Получен запрос на обновление пользователя: {}", newUser);
+        log.debug("Получен запрос на обновление пользователя: {}", newUser);
 
         if (!users.containsKey(newUser.getId())) {
             log.error("Пользователь с id {} не найден", newUser.getId());
@@ -84,7 +84,7 @@ public class UserController {
         }
 
         users.put(newUser.getId(), newUser);
-        log.info("Пользователь успешно обновлен: {}", newUser);
+        log.debug("Пользователь успешно обновлен: {}", newUser);
         return newUser;
     }
 }

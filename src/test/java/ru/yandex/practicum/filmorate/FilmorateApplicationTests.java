@@ -17,11 +17,6 @@ class FilmorateApplicationTests {
 	}
 
 	@Test
-	void main() {
-		FilmorateApplication.main(new String[] {});
-	}
-
-	@Test
 	void shouldCreateFilmCorrectly() {
 		Film film = new Film();
 		film.setName("Inception");

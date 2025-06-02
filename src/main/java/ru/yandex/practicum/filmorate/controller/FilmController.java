@@ -27,7 +27,7 @@ public class FilmController {
 
     @PostMapping
     public Film createPost(@RequestBody Film newFilm) {
-        log.info("Получен запрос на создание фильма: {}", newFilm);
+        log.debug("Получен запрос на создание фильма: {}", newFilm);
         if (newFilm.getName() == null || newFilm.getName().isBlank()) {
             throw new ValidationException("Название не может быть пустым");
         }
@@ -49,7 +49,7 @@ public class FilmController {
 
         newFilm.setId(getNextId());
         films.put(newFilm.getId(), newFilm);
-        log.info("Фильм успешно создан: {}", newFilm);
+        log.debug("Фильм успешно создан: {}", newFilm);
         return newFilm;
     }
 
@@ -62,7 +62,7 @@ public class FilmController {
 
     @PutMapping
     public Film update(@RequestBody Film newFilm) {
-        log.info("Получен запрос на обновление фильма: {}", newFilm);
+        log.debug("Получен запрос на обновление фильма: {}", newFilm);
         if (newFilm.getName() == null) {
             throw new ValidationException("Название не может быть пустым");
         }
@@ -84,7 +84,7 @@ public class FilmController {
             throw new ValidationException("Фильм с id = " + newFilm.getId() + " не найден");
         }
         films.put(newFilm.getId(), newFilm);
-        log.info("Фильм успешно обновлён: {}", newFilm);
+        log.debug("Фильм успешно обновлён: {}", newFilm);
         return newFilm;
     }
 }
