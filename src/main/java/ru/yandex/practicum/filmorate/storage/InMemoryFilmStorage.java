@@ -1,4 +1,3 @@
-// InMemoryFilmStorage.java
 package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
