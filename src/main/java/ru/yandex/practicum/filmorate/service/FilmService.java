@@ -44,7 +44,7 @@ public class FilmService {
     private void validateFilm(Film newFilm) {
         if (newFilm.getName() == null ||
                 newFilm.getName().isBlank()) {
-            throw new ValidationException("название не может быть пустым.)");
+            throw new ValidationException("название не может быть пустым.");
         }
         if (newFilm.getDescription() == null ||
                 newFilm.getDescription().length() > 200) {
