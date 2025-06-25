@@ -15,9 +15,11 @@ public class FilmService {
 
     private static final LocalDate EARLIEST_RELEASE_DATE = LocalDate.of(1895, 12, 28);
     private final FilmStorage filmStorage;
+    private final UserService userService;
 
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
+        this.userService = userService;
     }
 
     public Film create(Film newFilm) {
@@ -75,6 +77,9 @@ public class FilmService {
         Film film = getById(filmId);
         if (film == null) {
             throw new NoSuchElementException("Фильм с id " + filmId + "не найден.");
+        }
+        if (userService.getById(userId) == null) {
+            throw new NoSuchElementException("Пользователь с id " + userId + " не найден.");
         }
         if (!film.getLikes().contains(userId)) {
             throw new NoSuchElementException("Пользователь с id " + userId + " не ставил лайк фильму с id " + filmId);
