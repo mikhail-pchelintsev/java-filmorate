@@ -65,8 +65,8 @@ public class FilmService {
         if (film == null) {
             throw new NoSuchElementException("Фильм с id " + filmId + "не найден.");
         }
-        if (!film.getLikes().contains(userId)) {
-            throw new NoSuchElementException("Пользователь с id " + userId + " не ставил лайк фильму с id " + filmId);
+        if (film.getLikes().contains(userId)) {
+            throw new ValidationException("Пользователь с id " + userId + " уже поставил лайк фильму с id " + filmId);
         }
         film.getLikes().add(userId);
     }
