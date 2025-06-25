@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
@@ -66,7 +67,7 @@ public class FilmService {
             throw new NoSuchElementException("Фильм с id " + filmId + "не найден.");
         }
         if (film.getLikes().contains(userId)) {
-            throw new ValidationException("Пользователь с id " + userId + " уже поставил лайк фильму с id " + filmId);
+            throw new NoSuchElementException("Пользователь с id " + userId + " уже поставил лайк фильму с id " + filmId);
         }
         film.getLikes().add(userId);
     }
