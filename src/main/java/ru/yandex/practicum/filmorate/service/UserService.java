@@ -59,10 +59,10 @@ public class UserService {
         }
         if (newUser.getName() == null ||
                 newUser.getName().isBlank()) {
-            newUser.setName(newUser.getLogin()); // имя по логину
+            newUser.setName(newUser.getLogin());
         }
     }
-    
+
     public void addFriend(Long userId, Long friendId) {
         User user = getById(userId);
         User friend = getById(friendId);
