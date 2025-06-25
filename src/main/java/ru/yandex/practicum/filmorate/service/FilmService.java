@@ -67,6 +67,9 @@ public class FilmService {
         if (film == null) {
             throw new NoSuchElementException("Фильм с id " + filmId + "не найден.");
         }
+        if (userService.getById(userId) == null) {
+            throw new NoSuchElementException("Пользователь с id " + userId + " не найден.");
+        }
         if (film.getLikes().contains(userId)) {
             throw new NoSuchElementException("Пользователь с id " + userId + " уже поставил лайк фильму с id " + filmId);
         }
@@ -77,9 +80,6 @@ public class FilmService {
         Film film = getById(filmId);
         if (film == null) {
             throw new NoSuchElementException("Фильм с id " + filmId + "не найден.");
-        }
-        if (userService.getById(userId) == null) {
-            throw new NoSuchElementException("Пользователь с id " + userId + " не найден.");
         }
         if (!film.getLikes().contains(userId)) {
             throw new NoSuchElementException("Пользователь с id " + userId + " не ставил лайк фильму с id " + filmId);
