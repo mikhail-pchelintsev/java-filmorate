@@ -59,6 +59,7 @@ public class FilmService {
             throw new ValidationException("Длительность фильма некорректная.");
         }
     }
+
     public void addLike(Long filmId, Long userId) {
         Film film = getById(filmId);
         if (film == null) {
@@ -77,7 +78,7 @@ public class FilmService {
 
     public Collection<Film> getPopularMovies(int count) {
         return filmStorage.getAll().stream()
-                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()) )
+                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
                 .limit(count)
                 .toList();
     }
