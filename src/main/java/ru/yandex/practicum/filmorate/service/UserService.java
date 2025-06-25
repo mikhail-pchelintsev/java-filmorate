@@ -62,6 +62,7 @@ public class UserService {
             newUser.setName(newUser.getLogin()); // имя по логину
         }
     }
+    
     public void addFriend(Long userId, Long friendId) {
         User user = getById(userId);
         User friend = getById(friendId);
