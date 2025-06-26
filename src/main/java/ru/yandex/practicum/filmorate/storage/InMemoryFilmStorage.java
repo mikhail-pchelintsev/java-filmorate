@@ -20,9 +20,28 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public boolean exists(Long id) {
+        return films.containsKey(id);
+    }
+
+    @Override
+    public boolean userHasLiked(Long filmId, Long userId) {
+        Film film = films.get(filmId);
+        return film != null && film.getLikes().contains(userId);
+    }
+
+    @Override
     public Film update(Film film) {
         films.put(film.getId(), film);
         return film;
+    }
+
+    @Override
+    public Collection<Film> getTopPopular(int count) {
+        return films.values().stream()
+                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
+                .limit(count)
+                .toList();
     }
 
     @Override

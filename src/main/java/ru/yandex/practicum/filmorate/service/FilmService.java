@@ -29,7 +29,7 @@ public class FilmService {
 
     public Film update(Film newFilm) {
         validateFilm(newFilm);
-        if (filmStorage.getById(newFilm.getId()) == null) {
+        if (!filmStorage.exists(newFilm.getId())) {
             throw new NoSuchElementException("Фильм с id = " + newFilm.getId() + " не найден.");
         }
         return filmStorage.update(newFilm);
@@ -64,13 +64,13 @@ public class FilmService {
 
     public void addLike(Long filmId, Long userId) {
         Film film = getById(filmId);
-        if (film == null) {
+        if (!filmStorage.exists(filmId)) {
             throw new NoSuchElementException("Фильм с id " + filmId + "не найден.");
         }
         if (userService.getById(userId) == null) {
             throw new NoSuchElementException("Пользователь с id " + userId + " не найден.");
         }
-        if (film.getLikes().contains(userId)) {
+        if (filmStorage.userHasLiked(filmId, userId)) {
             throw new NoSuchElementException("Пользователь с id " + userId + " уже поставил лайк фильму с id " + filmId);
         }
         film.getLikes().add(userId);
@@ -88,9 +88,6 @@ public class FilmService {
     }
 
     public Collection<Film> getPopularMovies(int count) {
-        return filmStorage.getAll().stream()
-                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
-                .limit(count)
-                .toList();
+        return filmStorage.getTopPopular(count);
     }
 }
