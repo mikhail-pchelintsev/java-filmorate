@@ -1,48 +1,40 @@
 package ru.yandex.practicum.filmorate;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-class FilmorateApplicationTests {
+@JdbcTest
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Import({UserDbStorage.class})
+class FilmoRateApplicationTests {
+    @Autowired
+    private UserStorage userStorage;
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    public void testFindUserById() {
+        Optional<User> userOptional = Optional.ofNullable(userStorage.findById(1).orElse(null));
 
-	@Test
-	void shouldCreateFilmCorrectly() {
-		Film film = new Film();
-		film.setName("Inception");
-		film.setDescription("A mind-bending thriller");
-		film.setReleaseDate(LocalDate.of(2010, 7, 16));
-		film.setDuration(148);
-
-		assertEquals("Inception", film.getName());
-		assertEquals("A mind-bending thriller", film.getDescription());
-		assertEquals(LocalDate.of(2010, 7, 16), film.getReleaseDate());
-		assertEquals(148, film.getDuration());
-	}
-
-	@Test
-	void shouldFailIfDurationIsNegative() {
-		Film film = new Film();
-		film.setDuration(-100);
-
-		assertTrue(film.getDuration() < 0, "Продолжительность фильма не может быть отрицательной");
-	}
-
-	@Test
-	void shouldThrowValidationExceptionWhenBirthdayIsInTheFuture() {
-		User user = new User();
-		user.setBirthday(LocalDate.now().plusDays(1));
-
-		assertTrue(user.getBirthday().isAfter(LocalDate.now()), "Дата рождения не может быть в будущем");
-	}
+        assertThat(userOptional)
+                .isPresent()
+                .hasValueSatisfying(user ->
+                        assertThat(user).hasFieldOrPropertyWithValue("id", 1)
+                );
+    }
 }

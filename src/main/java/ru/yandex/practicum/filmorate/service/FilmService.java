@@ -1,93 +1,53 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
-
 import java.util.Collection;
-import java.util.NoSuchElementException;
 
 @Service
 public class FilmService {
+    private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
-    private static final LocalDate EARLIEST_RELEASE_DATE = LocalDate.of(1895, 12, 28);
-    private final FilmStorage filmStorage;
-    private final UserService userService;
+    private final FilmStorage storage;
 
-    public FilmService(FilmStorage filmStorage, UserService userService) {
-        this.filmStorage = filmStorage;
-        this.userService = userService;
+    public FilmService(FilmStorage storage) {
+        this.storage = storage;
     }
 
-    public Film create(Film newFilm) {
-        validateFilm(newFilm);
-        return filmStorage.create(newFilm);
+    public Film create(Film film) {
+        validate(film);
+        return storage.create(film);
     }
 
-    public Film update(Film newFilm) {
-        validateFilm(newFilm);
-        if (!filmStorage.exists(newFilm.getId())) {
-            throw new NoSuchElementException("Фильм с id = " + newFilm.getId() + " не найден.");
-        }
-        return filmStorage.update(newFilm);
+    public Film update(Film film) {
+        if (film.getId() == null || storage.findById(film.getId()).isEmpty())
+            throw new NotFoundException("Film not found");
+        validate(film);
+        return storage.update(film);
     }
 
-    public Film getById(Long id) {
-        return filmStorage.getById(id);
+    public Collection<Film> getAll() {
+        return storage.findAll();
     }
 
-    public Collection<Film> getAllFilms() {
-        return filmStorage.getAll();
+    public Film getById(int id) {
+        return storage.findById(id).orElseThrow(() -> new NotFoundException("Film not found"));
     }
 
-    private void validateFilm(Film newFilm) {
-        if (newFilm.getName() == null ||
-                newFilm.getName().isBlank()) {
-            throw new ValidationException("название не может быть пустым.");
-        }
-        if (newFilm.getDescription() == null ||
-                newFilm.getDescription().length() > 200) {
-            throw new ValidationException("описание не может быть длиннее 200 знаков.");
-        }
-        if (newFilm.getReleaseDate() == null ||
-                newFilm.getReleaseDate().isBefore(EARLIEST_RELEASE_DATE)) {
-            throw new ValidationException("Дата релиза некорректная.");
-        }
-        if (newFilm.getDuration() == null ||
-                newFilm.getDuration() <= 0) {
-            throw new ValidationException("Длительность фильма некорректная.");
-        }
-    }
-
-    public void addLike(Long filmId, Long userId) {
-        Film film = getById(filmId);
-        if (!filmStorage.exists(filmId)) {
-            throw new NoSuchElementException("Фильм с id " + filmId + "не найден.");
-        }
-        if (userService.getById(userId) == null) {
-            throw new NoSuchElementException("Пользователь с id " + userId + " не найден.");
-        }
-        if (filmStorage.userHasLiked(filmId, userId)) {
-            throw new NoSuchElementException("Пользователь с id " + userId + " уже поставил лайк фильму с id " + filmId);
-        }
-        film.getLikes().add(userId);
-    }
-
-    public void deleteLike(Long filmId, Long userId) {
-        Film film = getById(filmId);
-        if (film == null) {
-            throw new NoSuchElementException("Фильм с id " + filmId + "не найден.");
-        }
-        if (!film.getLikes().contains(userId)) {
-            throw new NoSuchElementException("Пользователь с id " + userId + " не ставил лайк фильму с id " + filmId);
-        }
-        film.getLikes().remove(userId);
-    }
-
-    public Collection<Film> getPopularMovies(int count) {
-        return filmStorage.getTopPopular(count);
+    private void validate(Film film) {
+        if (film.getName() == null || film.getName().isBlank())
+            throw new ValidationException("Film name must not be blank");
+        if (film.getDescription() != null && film.getDescription().length() > 200)
+            throw new ValidationException("Description too long");
+        if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(CINEMA_BIRTHDAY))
+            throw new ValidationException("Release date is too early");
+        if (film.getDuration() == null || film.getDuration() <= 0)
+            throw new ValidationException("Duration must be positive");
+        // mpa и жанры подхватятся из БД через JOIN-ы в storage
     }
 }
