@@ -1,13 +1,15 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -19,6 +21,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbc;
+    private static final Logger log = LoggerFactory.getLogger(UserDbStorage.class);
 
     @Override
     public User create(User user) {
@@ -62,29 +65,57 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void addFriend(int userId, int friendId) {
-        String sql = "INSERT INTO friendships (user_id, friend_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
+        if (findById(userId).isEmpty() || findById(friendId).isEmpty()) {
+            throw new NotFoundException("User not found");
+        }
+
+        if (userId == friendId) {
+            throw new ValidationException("Cannot add self as friend");
+        }
+
+        String sql = "MERGE INTO friendship (user_id, friend_id, status) " +
+                "KEY(user_id, friend_id) " +
+                "VALUES (?, ?, 'ACCEPTED')";
+
+        log.info("Before adding friend, user1's friends: {}", getFriends(userId));
+        log.info("Before adding friend, user2's friends: {}", getFriends(friendId));
+
         jdbc.update(sql, userId, friendId);
+
+        log.info("After adding friend, user1's friends: {}", getFriends(userId));
+        log.info("After adding friend, user2's friends: {}", getFriends(friendId));
     }
 
     @Override
-    public void removeFriend(int userId, int friendId) {
-        int removed = jdbc.update("DELETE FROM friendships WHERE user_id=? AND friend_id=?", userId, friendId);
-        if (removed == 0) {
-            int removedReverse = jdbc.update("DELETE FROM friendships WHERE user_id=? AND friend_id=?", friendId, userId);
-            if (removedReverse > 0) {
-                jdbc.update("INSERT INTO friendships (user_id, friend_id) VALUES (?, ?) ON CONFLICT DO NOTHING",
-                        userId, friendId);
-            }
+    public int removeFriend(int userId, int friendId) {
+        Optional<User> user = findById(userId);
+        Optional<User> friend = findById(friendId);
 
+        if (user.isEmpty() || friend.isEmpty()) {
+            throw new NotFoundException("User or friend not found");
         }
+
+        String sql = "DELETE FROM friendship WHERE user_id=? AND friend_id=?";
+        int removed = jdbc.update(sql, userId, friendId);
+
+        if (removed == 0 ) {
+            return 0;
+        }
+        return removed;
     }
 
     @Override
     public List<User> getFriends(int userId) {
+        if (findById(userId).isEmpty()) {
+            throw new NotFoundException("User not found");
+        }
+
         String sql =
-                "SELECT u.* FROM friendships f " +
+                "SELECT u.* FROM friendship f " +
                         "JOIN users u ON u.id = f.friend_id " +
-                        "WHERE f.user_id=? ORDER BY u.id";
+                        "WHERE f.user_id=? AND f.status='ACCEPTED' " +
+                        "ORDER BY u.id";
+
         return jdbc.query(sql, this::map, userId);
     }
 
@@ -92,9 +123,10 @@ public class UserDbStorage implements UserStorage {
     public List<User> getCommonFriends(int userId, int otherId) {
         String sql =
                 "SELECT u.* FROM users u " +
-                        "JOIN friendships f1 ON u.id = f1.friend_id AND f1.user_id=? " +
-                        "JOIN friendships f2 ON u.id = f2.friend_id AND f2.user_id=? " +
+                        "JOIN friendship f1 ON u.id = f1.friend_id AND f1.user_id=? AND f1.status='ACCEPTED' " +
+                        "JOIN friendship f2 ON u.id = f2.friend_id AND f2.user_id=? AND f2.status='ACCEPTED' " +
                         "ORDER BY u.id";
+
         return jdbc.query(sql, this::map, userId, otherId);
     }
 

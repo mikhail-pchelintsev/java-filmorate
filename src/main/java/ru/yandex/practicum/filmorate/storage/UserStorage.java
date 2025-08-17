@@ -12,7 +12,7 @@ public interface UserStorage {
     Collection<User> findAll();
     Optional<User> findById(int id);
     void addFriend(int userId, int friendId);
-    void removeFriend(int userId, int friendId);
+    int removeFriend(int userId, int friendId);
     List<User> getFriends(int userId);
     List<User> getCommonFriends(int userId, int otherId);
 }

@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.*;
 
+@Data
 public class Film {
     private Integer id;
     private String name;
@@ -14,24 +16,7 @@ public class Film {
     private Integer duration;
     private Mpa mpa;
     private List<Genre> genres = new ArrayList<>();
-
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public LocalDate getReleaseDate() { return releaseDate; }
-    public void setReleaseDate(LocalDate releaseDate) { this.releaseDate = releaseDate; }
-
-    public Integer getDuration() { return duration; }
-    public void setDuration(Integer duration) { this.duration = duration; }
-
-    public Mpa getMpa() { return mpa; }
-    public void setMpa(Mpa mpa) { this.mpa = mpa; }
+    private int likesCount = 0;
 
     public List<Genre> getGenres() { return genres; }
     public void setGenres(List<Genre> genres) {

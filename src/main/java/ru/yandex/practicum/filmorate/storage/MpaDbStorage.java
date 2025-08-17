@@ -17,11 +17,11 @@ public class MpaDbStorage {
     private final JdbcTemplate jdbc;
 
     public Collection<Mpa> findAll() {
-        return jdbc.query("SELECT * FROM mpa ORDER BY id", this::map);
+        return jdbc.query("SELECT * FROM mpa_rating  ORDER BY id", this::map);
     }
 
     public Optional<Mpa> findById(int id) {
-        List<Mpa> list = jdbc.query("SELECT * FROM mpa WHERE id=?", this::map, id);
+        List<Mpa> list = jdbc.query("SELECT * FROM mpa_rating  WHERE id=?", this::map, id);
         return list.stream().findFirst();
     }
 

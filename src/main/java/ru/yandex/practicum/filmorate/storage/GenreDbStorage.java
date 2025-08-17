@@ -17,11 +17,11 @@ public class GenreDbStorage {
     private final JdbcTemplate jdbc;
 
     public Collection<Genre> findAll() {
-        return jdbc.query("SELECT * FROM genres ORDER BY id", this::map);
+        return jdbc.query("SELECT * FROM genre ORDER BY id", this::map);
     }
 
     public Optional<Genre> findById(int id) {
-        List<Genre> list = jdbc.query("SELECT * FROM genres WHERE id=?", this::map, id);
+        List<Genre> list = jdbc.query("SELECT * FROM genre WHERE id=?", this::map, id);
         return list.stream().findFirst();
     }
 
