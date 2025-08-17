@@ -18,7 +18,10 @@ public class Film {
     private List<Genre> genres = new ArrayList<>();
     private int likesCount = 0;
 
-    public List<Genre> getGenres() { return genres; }
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
     public void setGenres(List<Genre> genres) {
         Map<Integer, Genre> seen = new LinkedHashMap<>();
         if (genres != null) {

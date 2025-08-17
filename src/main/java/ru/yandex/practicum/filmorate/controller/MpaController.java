@@ -12,7 +12,9 @@ import java.util.Collection;
 public class MpaController {
     private final MpaDbStorage storage;
 
-    public MpaController(MpaDbStorage storage) { this.storage = storage; }
+    public MpaController(MpaDbStorage storage) {
+        this.storage = storage;
+    }
 
     @GetMapping
     public Collection<Mpa> findAll() {

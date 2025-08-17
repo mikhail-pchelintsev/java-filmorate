@@ -13,7 +13,9 @@ import java.util.Collection;
 public class FilmController {
     private final FilmService service;
 
-    public FilmController(FilmService service) { this.service = service; }
+    public FilmController(FilmService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<Film> create(@RequestBody Film film) {

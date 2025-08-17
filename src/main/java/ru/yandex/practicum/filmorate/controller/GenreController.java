@@ -12,7 +12,9 @@ import java.util.Collection;
 public class GenreController {
     private final GenreDbStorage storage;
 
-    public GenreController(GenreDbStorage storage) { this.storage = storage; }
+    public GenreController(GenreDbStorage storage) {
+        this.storage = storage;
+    }
 
     @GetMapping
     public Collection<Genre> findAll() {

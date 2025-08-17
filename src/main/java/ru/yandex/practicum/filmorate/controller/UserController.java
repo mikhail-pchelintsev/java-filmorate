@@ -15,7 +15,9 @@ import java.util.List;
 public class UserController {
     private final UserService service;
 
-    public UserController(UserService service) { this.service = service; }
+    public UserController(UserService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<User> create(@RequestBody User user) {

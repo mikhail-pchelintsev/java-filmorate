@@ -98,7 +98,7 @@ public class UserDbStorage implements UserStorage {
         String sql = "DELETE FROM friendship WHERE user_id=? AND friend_id=?";
         int removed = jdbc.update(sql, userId, friendId);
 
-        if (removed == 0 ) {
+        if (removed == 0) {
             return 0;
         }
         return removed;

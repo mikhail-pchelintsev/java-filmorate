@@ -89,7 +89,6 @@ public class FilmDbStorage implements FilmStorage {
         if (films.isEmpty()) {
             throw new NotFoundException("Фильмов нет");
         }
-
         return films;
     }
 

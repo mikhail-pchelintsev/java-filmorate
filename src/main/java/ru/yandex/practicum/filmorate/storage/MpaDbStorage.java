@@ -21,7 +21,7 @@ public class MpaDbStorage {
     }
 
     public Optional<Mpa> findById(int id) {
-        List<Mpa> list = jdbc.query("SELECT * FROM mpa_rating  WHERE id=?", this::map, id);
+        List<Mpa> list = jdbc.query("SELECT * FROM mpa_rating WHERE id=?", this::map, id);
         return list.stream().findFirst();
     }
 
