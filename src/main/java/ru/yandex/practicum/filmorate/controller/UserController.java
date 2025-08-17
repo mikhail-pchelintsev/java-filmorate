@@ -62,8 +62,6 @@ public class UserController {
     @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable int id) {
         List<User> friends = service.getFriends(id);
-        if (friends.isEmpty()) {
-        }
         return friends;
     }
 
