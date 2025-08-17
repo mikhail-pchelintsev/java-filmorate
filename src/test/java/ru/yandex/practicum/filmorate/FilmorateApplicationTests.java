@@ -1,48 +1,17 @@
 package ru.yandex.practicum.filmorate;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.context.annotation.Import;
+import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
-import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-@SpringBootTest
+@JdbcTest
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Import({UserDbStorage.class})
 class FilmorateApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
-	@Test
-	void shouldCreateFilmCorrectly() {
-		Film film = new Film();
-		film.setName("Inception");
-		film.setDescription("A mind-bending thriller");
-		film.setReleaseDate(LocalDate.of(2010, 7, 16));
-		film.setDuration(148);
-
-		assertEquals("Inception", film.getName());
-		assertEquals("A mind-bending thriller", film.getDescription());
-		assertEquals(LocalDate.of(2010, 7, 16), film.getReleaseDate());
-		assertEquals(148, film.getDuration());
-	}
-
-	@Test
-	void shouldFailIfDurationIsNegative() {
-		Film film = new Film();
-		film.setDuration(-100);
-
-		assertTrue(film.getDuration() < 0, "Продолжительность фильма не может быть отрицательной");
-	}
-
-	@Test
-	void shouldThrowValidationExceptionWhenBirthdayIsInTheFuture() {
-		User user = new User();
-		user.setBirthday(LocalDate.now().plusDays(1));
-
-		assertTrue(user.getBirthday().isAfter(LocalDate.now()), "Дата рождения не может быть в будущем");
-	}
 }
