@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -18,8 +19,8 @@ public class FilmController {
     }
 
     @PostMapping
-    public ResponseEntity<Film> create(@RequestBody Film film) {
-        return ResponseEntity.ok(service.create(film));
+    public Film create(@RequestBody Film film) {
+        return service.create(film);
     }
 
     @PutMapping
@@ -30,10 +31,6 @@ public class FilmController {
     @GetMapping
     public Collection<Film> getAll() {
         Collection<Film> films = service.getAll();
-
-        if (films == null || films.isEmpty()) {
-            throw new NotFoundException("Фильмов нет");
-        }
         return films;
     }
 
@@ -47,15 +44,15 @@ public class FilmController {
         return service.getPopular(count);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}/like/{userId}")
-    public ResponseEntity<Void> addLike(@PathVariable int id, @PathVariable int userId) {
+    public void addLike(@PathVariable int id, @PathVariable int userId) {
         service.addLike(id, userId);
-        return ResponseEntity.status(204).build();
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}/like/{userId}")
-    public ResponseEntity<Void> removeLike(@PathVariable int id, @PathVariable int userId) {
+    public void removeLike(@PathVariable int id, @PathVariable int userId) {
         service.removeLike(id, userId);
-        return ResponseEntity.status(204).build();
     }
 }

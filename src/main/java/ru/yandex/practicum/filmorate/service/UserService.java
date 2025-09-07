@@ -45,16 +45,12 @@ public class UserService {
     }
 
     public void addFriend(int id, int friendId) {
-        log.info("addFriend called with id = {} and friendId = {}", id, friendId);
         getById(id);
         getById(friendId);
 
         if (id == friendId) {
-            log.warn("User {} cannot add themselves as a friend", id);
             throw new ValidationException("Cannot add self as friend");
         }
-
-        log.info("Calling storage.addFriend for user {} and friend {}", id, friendId);
         storage.addFriend(id, friendId);
     }
 
