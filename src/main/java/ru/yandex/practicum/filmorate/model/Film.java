@@ -1,30 +1,36 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.*;
 
 @Data
 public class Film {
-    private Long id;
+    private Integer id;
     private String name;
     private String description;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
     private Integer duration;
-    private Set<Long> likes = new HashSet<>();
+    private Mpa mpa;
+    private List<Genre> genres = new ArrayList<>();
+    private int likesCount = 0;
 
-    public void addLike(Long userId) {
-        if (userId != null) {
-            likes.add(userId);
-        }
+    public List<Genre> getGenres() {
+        return genres;
     }
 
-    public void removeLike(Long userId) {
-        if (userId != null) {
-            likes.remove(userId);
+    public void setGenres(List<Genre> genres) {
+        Map<Integer, Genre> seen = new LinkedHashMap<>();
+        if (genres != null) {
+            for (Genre g : genres) {
+                if (g != null && g.getId() != null && !seen.containsKey(g.getId())) {
+                    seen.put(g.getId(), g);
+                }
+            }
         }
+        this.genres = new ArrayList<>(seen.values());
     }
 }
